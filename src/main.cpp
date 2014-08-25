@@ -2818,7 +2818,8 @@ bool InitBlockIndex() {
 
 			while(true)
 			{
-				thash = scrypt_blockhash(BEGIN(block.nVersion));
+				static char scratchpad[SCRYPT_SCRATCHPAD_SIZE];
+            scrypt_1024_1_1_256_sp(BEGIN(block.nVersion), BEGIN(thash), scratchpad);
 				if (thash <= hashTarget)
 					break;
 				if ((block.nNonce & 0xFFF) == 0)
