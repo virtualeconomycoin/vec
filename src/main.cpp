@@ -35,7 +35,7 @@ CTxMemPool mempool;
 unsigned int nTransactionsUpdated = 0;
 
 map<uint256, CBlockIndex*> mapBlockIndex;
-uint256 hashGenesisBlock("0x94678ab7ee4804f2a194bf56cd334e7955aad799e8bac37a6251955b1dc1ee94");
+uint256 hashGenesisBlock("0x94678ab7ee4804f2a194bf56cd334e7955aad791e8bac37a6251955b1dc1ee94");
 static CBigNum bnProofOfWorkLimit(~uint256(0) >> 20); // Virtualeconomycoin: starting difficulty is 1 / 2^12
 CBlockIndex* pindexGenesisBlock = NULL;
 int nBestHeight = -1;
@@ -2770,7 +2770,7 @@ bool InitBlockIndex() {
     printf("Initializing databases...\n");
 
     // Only add the genesis block if not reindexing (in which case we reuse the one already on disk)
-    if (fReindex) {
+    if (!fReindex) {
         // Genesis Block:
         // CBlock(hash=12a765e31ffd4059bada, PoW=0000050c34a64b415b6b, ver=1, hashPrevBlock=00000000000000000000, hashMerkleRoot=97ddfbbae6, nTime=1317972665, nBits=1e0ffff0, nNonce=2084524493, vtx=1)
         //   CTransaction(hash=97ddfbbae6, ver=1, vin.size=1, vout.size=1, nLockTime=0)
@@ -2818,8 +2818,7 @@ bool InitBlockIndex() {
 
 			while(true)
 			{
-				static char scratchpad[SCRYPT_SCRATCHPAD_SIZE];
-            scrypt_1024_1_1_256_sp(BEGIN(block.nVersion), BEGIN(thash), scratchpad);
+				thash = scrypt_blockhash(BEGIN(block.nVersion));	
 				if (thash <= hashTarget)
 					break;
 				if ((block.nNonce & 0xFFF) == 0)
